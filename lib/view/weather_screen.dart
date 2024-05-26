@@ -54,6 +54,7 @@ class WeatherScreen extends StatelessWidget {
                       child: const Text('Increment'),
                       onPressed: () {
                         controller.increment();
+                        print(controller.count.value);
                       },
                     ),
                   ],

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:getx_weather/view/settings_screen.dart';
+import 'package:get/get.dart';
+import 'package:getx_weather/controller/counter_controller.dart';
 
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({super.key});
@@ -8,6 +9,7 @@ class WeatherScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final CounterController controller = Get.put(CounterController());
     return CupertinoPageScaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         child: NestedScrollView(
@@ -16,7 +18,7 @@ class WeatherScreen extends StatelessWidget {
               CupertinoSliverNavigationBar(
                 backgroundColor: Theme.of(context).colorScheme.background,
                 largeTitle: Text(
-                  "Dhaka",
+                  "Task 2",
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
@@ -24,16 +26,50 @@ class WeatherScreen extends StatelessWidget {
               ),
             ];
           },
-          body: Container(
-            child: Center(
-              child: CupertinoButton(
-                color: CupertinoColors.activeBlue,
-                child: const Text('Settings'),
-                onPressed: () {
-                  Navigator.pushNamed(context, SettingsScreen.routeName,
-                      arguments: "Hello");
-                },
-              ),
+          body: Scaffold(
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Obx(() => Text(
+                      controller.count.toString(),
+                      style: const TextStyle(fontSize: 50),
+                    )),
+                const SizedBox(
+                  height: 100,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CupertinoButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      color: CupertinoColors.activeBlue,
+                      child: const Text('Decrement'),
+                      onPressed: () {
+                        controller.decrement();
+                      },
+                    ),
+                    CupertinoButton(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      color: CupertinoColors.activeBlue,
+                      child: const Text('Increment'),
+                      onPressed: () {
+                        controller.increment();
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+                CupertinoButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                  color: CupertinoColors.activeBlue,
+                  child: const Text('Reset'),
+                  onPressed: () {
+                    controller.reset();
+                  },
+                ),
+              ],
             ),
           ),
         ));

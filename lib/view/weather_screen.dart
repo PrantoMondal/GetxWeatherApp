@@ -11,37 +11,38 @@ class WeatherScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final WeatherController currentWeatherController =
-        Get.put(WeatherController());
+    final WeatherController weatherController = Get.put(WeatherController());
     return Material(
+      //tried to make appbar look like ios
       child: CupertinoPageScaffold(
-        backgroundColor: Color(0xFF798ED6),
+        backgroundColor: const Color(0xFF798ED6),
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               CupertinoSliverNavigationBar(
                 backgroundColor: Colors.transparent,
+                //make it observable, because i want to show current location in appbar
                 largeTitle: Obx(
                   () => Text(
-                    currentWeatherController.isLoading.value
+                    weatherController.isLoading.value
                         ? ""
-                        : currentWeatherController
-                            .currentWeather.value!.city.name,
+                        : weatherController.forecastData.value!.city.name,
                   ),
                 ),
                 border: null,
               ),
             ];
           },
+          //observable
           body: Obx(() {
-            if (currentWeatherController.isLoading.value) {
+            if (weatherController.isLoading.value) {
               return const Center(child: CircularProgressIndicator());
-            } else if (currentWeatherController.currentWeather.value == null) {
+            } else if (weatherController.forecastData.value == null) {
               return const Center(child: Text('No data found'));
             } else {
-              var currentWeather =
-                  currentWeatherController.currentWeather.value!;
-              var present = currentWeather.list.first;
+              var forecastWeather = weatherController.forecastData.value!;
+              //here temp is used for showing the current data, letter I will fetch current data separately
+              var temp = forecastWeather.list.first;
               return Column(
                 children: [
                   Card(
@@ -55,11 +56,11 @@ class WeatherScreen extends StatelessWidget {
                           Row(
                             children: [
                               Image.network(
-                                '$iconPrefix${present.weather.first.icon}$iconSuffix',
+                                '$iconPrefix${temp.weather.first.icon}$iconSuffix',
                                 fit: BoxFit.cover,
                               ),
                               Text(
-                                '${present.main.temp}$degree$celsius',
+                                '${temp.main.temp}$degree$celsius',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 50),
                               ),
@@ -78,7 +79,7 @@ class WeatherScreen extends StatelessWidget {
                                     height: 35,
                                     width: 35,
                                   ),
-                                  Text(present.clouds.all.toString()),
+                                  Text(temp.clouds.all.toString()),
                                 ],
                               ),
                               Column(
@@ -88,7 +89,7 @@ class WeatherScreen extends StatelessWidget {
                                     height: 35,
                                     width: 35,
                                   ),
-                                  Text(present.main.humidity.toString()),
+                                  Text(temp.main.humidity.toString()),
                                 ],
                               ),
                               Column(
@@ -98,7 +99,7 @@ class WeatherScreen extends StatelessWidget {
                                     height: 35,
                                     width: 35,
                                   ),
-                                  Text(present.wind.speed.toString()),
+                                  Text(temp.wind.speed.toString()),
                                 ],
                               ),
                             ],
@@ -111,12 +112,12 @@ class WeatherScreen extends StatelessWidget {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
-                      itemCount: currentWeather.list.length,
+                      itemCount: forecastWeather.list.length,
                       itemBuilder: (context, index) {
                         return Container(
                           margin: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 5),
-                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               color: Colors.white.withOpacity(0.9)),
@@ -127,7 +128,7 @@ class WeatherScreen extends StatelessWidget {
                                   Text(
                                     DateFormat("hh:mm a").format(
                                         DateTime.fromMillisecondsSinceEpoch(
-                                            currentWeather.list[index].dt
+                                            forecastWeather.list[index].dt
                                                     .toInt() *
                                                 1000)),
                                     style: const TextStyle(
@@ -137,7 +138,7 @@ class WeatherScreen extends StatelessWidget {
                                   Text(
                                     DateFormat("dd/MM/yyyy").format(
                                         DateTime.fromMillisecondsSinceEpoch(
-                                            currentWeather.list[index].dt
+                                            forecastWeather.list[index].dt
                                                     .toInt() *
                                                 1000)),
                                     style: const TextStyle(
@@ -148,11 +149,11 @@ class WeatherScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               Image.network(
-                                '$iconPrefix${currentWeather.list[index].weather.first.icon}$iconSuffix',
+                                '$iconPrefix${forecastWeather.list[index].weather.first.icon}$iconSuffix',
                                 fit: BoxFit.cover,
                               ),
                               Text(
-                                '${currentWeather.list[index].main.temp}$degree$celsius',
+                                '${forecastWeather.list[index].main.temp}$degree$celsius',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 25),
                               ),

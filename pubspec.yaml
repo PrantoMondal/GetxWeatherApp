@@ -37,6 +37,8 @@ dependencies:
   hive_flutter:
   geolocator: ^11.0.0
   google_maps_flutter:
+  firebase_core:
+  firebase_messaging:
 
 
 

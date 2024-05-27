@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>414929849502-a5hskcj30hoquqh7rfme25c2grpcmf0t.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.414929849502-a5hskcj30hoquqh7rfme25c2grpcmf0t</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>414929849502-50a3ag039116g0l0n71hidquod3bhdum.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDXHioRsJ4c9MDngTJEMCTda3uAkgKUrQs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>414929849502</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.getxWeather</string>
+	<key>PROJECT_ID</key>
+	<string>gita-app-928fe</string>
+	<key>STORAGE_BUCKET</key>
+	<string>gita-app-928fe.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:414929849502:ios:22881b83896d08a54cbf8f</string>
+</dict>
+</plist>

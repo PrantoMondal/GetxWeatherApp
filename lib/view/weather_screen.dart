@@ -109,13 +109,13 @@ class WeatherScreen extends StatelessWidget {
                             children: [
                               customRowItem(
                                   image: "assets/icons/clouds.png",
-                                  value: currentData.clouds!.all.toString()),
+                                  value: "${currentData.clouds!.all}%"),
                               customRowItem(
                                   image: "assets/icons/humidity.png",
-                                  value: currentData.main!.humidity.toString()),
+                                  value: "${currentData.main!.humidity}%"),
                               customRowItem(
                                   image: "assets/icons/windspeed.png",
-                                  value: currentData.wind!.speed.toString()),
+                                  value: "${currentData.wind!.speed}km/h"),
                             ],
                           ),
                         ],

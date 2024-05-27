@@ -24,9 +24,9 @@ class WeatherScreen extends StatelessWidget {
                 //make it observable, because i want to show current location in appbar
                 largeTitle: Obx(
                   () => Text(
-                    weatherController.isLoading.value
+                    weatherController.isCurrentLoading.value
                         ? ""
-                        : weatherController.forecastData.value!.city.name,
+                        : weatherController.currentData.value!.name!,
                   ),
                 ),
                 border: null,
@@ -34,81 +34,102 @@ class WeatherScreen extends StatelessWidget {
             ];
           },
           //observable
-          body: Obx(() {
-            if (weatherController.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (weatherController.forecastData.value == null) {
-              return const Center(child: Text('No data found'));
-            } else {
-              var forecastWeather = weatherController.forecastData.value!;
-              //here temp is used for showing the current data, letter I will fetch current data separately
-              var temp = forecastWeather.list.first;
-              return Column(
-                children: [
-                  Card(
-                    color: Colors.white.withOpacity(0.7),
-                    elevation: 4,
-                    margin: const EdgeInsets.all(20.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Image.network(
-                                '$iconPrefix${temp.weather.first.icon}$iconSuffix',
-                                fit: BoxFit.cover,
-                              ),
-                              Text(
-                                '${temp.main.temp}$degree$celsius',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 50),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    "assets/icons/clouds.png",
-                                    height: 35,
-                                    width: 35,
-                                  ),
-                                  Text(temp.clouds.all.toString()),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    "assets/icons/humidity.png",
-                                    height: 35,
-                                    width: 35,
-                                  ),
-                                  Text(temp.main.humidity.toString()),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    "assets/icons/windspeed.png",
-                                    height: 35,
-                                    width: 35,
-                                  ),
-                                  Text(temp.wind.speed.toString()),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
+          body: Column(
+            children: [
+              Obx(
+                () {
+                  if (weatherController.isCurrentLoading.value) {
+                    return const SizedBox(
+                        height: 200,
+                        child: Center(
+                            child: CircularProgressIndicator(
+                          color: Colors.white,
+                        )));
+                  } else if (weatherController.currentData.value == null) {
+                    return const Center(child: Text('No data found'));
+                  } else {
+                    var currentData = weatherController.currentData.value!;
+                    return Card(
+                      color: Colors.white.withOpacity(0.7),
+                      elevation: 4,
+                      margin: const EdgeInsets.all(20.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Image.network(
+                                  '$iconPrefix${currentData.weather!.first.icon}$iconSuffix',
+                                  fit: BoxFit.cover,
+                                ),
+                                Text(
+                                  '${currentData.main!.temp}$degree$celsius',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 50),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/clouds.png",
+                                      height: 35,
+                                      width: 35,
+                                    ),
+                                    Text(currentData.clouds!.all.toString()),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/humidity.png",
+                                      height: 35,
+                                      width: 35,
+                                    ),
+                                    Text(currentData.main!.humidity.toString()),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      "assets/icons/windspeed.png",
+                                      height: 35,
+                                      width: 35,
+                                    ),
+                                    Text(currentData.wind!.speed.toString()),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                  Expanded(
+                    );
+                  }
+                },
+              ),
+              Obx(() {
+                if (weatherController.isLoading.value) {
+                  return const SizedBox(
+                      height: 300,
+                      child: Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.white,
+                      )));
+                } else if (weatherController.forecastData.value == null) {
+                  return const Center(child: Text('No data found'));
+                } else {
+                  var forecastWeather = weatherController.forecastData.value!;
+
+                  return Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
@@ -162,11 +183,11 @@ class WeatherScreen extends StatelessWidget {
                         );
                       },
                     ),
-                  )
-                ],
-              );
-            }
-          }),
+                  );
+                }
+              }),
+            ],
+          ),
         ),
       ),
     );

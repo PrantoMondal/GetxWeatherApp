@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const String apiKey = "b567eba6c40f017dff2045dd2f1914cb";
+
+const mapApiKey = "AIzaSyDHAUXa6KgTDoisLEwqpaAuWTq6K308_R0";
 const String baseUrl = "https://api.openweathermap.org/";
 
 const String celsius = 'C';

@@ -35,6 +35,9 @@ dependencies:
   intl:
   hive: ^2.2.3
   hive_flutter:
+  geolocator: ^11.0.0
+  google_maps_flutter:
+
 
 
   # The following adds the Cupertino Icons font to your application.

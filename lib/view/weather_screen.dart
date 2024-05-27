@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_weather/controller/weather_controller.dart';
 import 'package:getx_weather/utils/constants.dart';
+import 'package:getx_weather/view/search_screen.dart';
 import 'package:intl/intl.dart';
 
 class WeatherScreen extends StatelessWidget {
@@ -27,11 +28,26 @@ class WeatherScreen extends StatelessWidget {
                   () => Text(
                     weatherController.isCurrentLoading.value
                         ? ""
-                        : weatherController.currentData.value!.name!,
+                        : weatherController.currentData.value == null
+                            ? ""
+                            : weatherController.currentData.value!.name!,
                   ),
                 ),
                 border: null,
                 padding: EdgeInsetsDirectional.zero,
+                trailing: IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, SearchScreen.routeName,
+                        arguments: [
+                          weatherController.forecastData.value!.city.coord.lat,
+                          weatherController.forecastData.value!.city.coord.lon
+                        ]);
+                  },
+                  icon: const Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ];
           },
@@ -251,7 +267,7 @@ class WeatherScreen extends StatelessWidget {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12),
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   Image.network(
                                     '$iconPrefix${weatherController.upcomingForecast[index].weather.first.icon}$iconSuffix',
                                     fit: BoxFit.cover,

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:getx_weather/hive/hiveDB.dart';
+import 'package:getx_weather/utils/constants.dart';
 import 'package:getx_weather/view/search_screen.dart';
-import 'package:getx_weather/view/settings_screen.dart';
 import 'package:getx_weather/view/weather_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(HiveDBAdapter());
+  box = await Hive.openBox<HiveDB>('currentWeather');
   runApp(const MyApp());
 }
 
@@ -22,8 +27,7 @@ class MyApp extends StatelessWidget {
       initialRoute: WeatherScreen.routeName,
       routes: {
         WeatherScreen.routeName: (_) => const WeatherScreen(),
-        SearchScreen.routeName: (_) => const SettingsScreen(),
-        SettingsScreen.routeName: (_) => const SettingsScreen(),
+        SearchScreen.routeName: (_) => const SearchScreen(),
       },
     );
   }

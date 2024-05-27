@@ -12,10 +12,11 @@ class WeatherScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final WeatherController weatherController = Get.put(WeatherController());
+
     return Material(
       //tried to make appbar look like ios
       child: CupertinoPageScaffold(
-        backgroundColor: const Color(0xFF798ED6),
+        backgroundColor: AppColors.primary,
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
@@ -30,166 +31,277 @@ class WeatherScreen extends StatelessWidget {
                   ),
                 ),
                 border: null,
+                padding: EdgeInsetsDirectional.zero,
               ),
             ];
           },
           //observable
-          body: Column(
-            children: [
-              Obx(
-                () {
-                  if (weatherController.isCurrentLoading.value) {
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(
+                  () {
+                    if (weatherController.isCurrentLoading.value) {
+                      return const SizedBox(
+                          height: 200,
+                          child: Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.white,
+                          )));
+                    } else if (weatherController.currentData.value == null) {
+                      return const Center(child: Text('No data found'));
+                    } else {
+                      var currentData = weatherController.currentData.value!;
+                      return Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Image.network(
+                                '$iconPrefix${currentData.weather!.first.icon}$iconSuffix',
+                                fit: BoxFit.cover,
+                              ),
+                              Container(
+                                width: 1,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColors.primary,
+                                      Colors.black,
+                                      AppColors.primary,
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                '${currentData.main!.temp?.toInt()}$degree$celsius',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 50),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              customRowItem(
+                                  image: "assets/icons/clouds.png",
+                                  value: currentData.clouds!.all.toString()),
+                              customRowItem(
+                                  image: "assets/icons/humidity.png",
+                                  value: currentData.main!.humidity.toString()),
+                              customRowItem(
+                                  image: "assets/icons/windspeed.png",
+                                  value: currentData.wind!.speed.toString()),
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  "Today",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 1),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Obx(() {
+                  if (weatherController.isLoading.value) {
                     return const SizedBox(
-                        height: 200,
-                        child: Center(
-                            child: CircularProgressIndicator(
+                      height: 300,
+                      child: Center(
+                        child: CircularProgressIndicator(
                           color: Colors.white,
-                        )));
-                  } else if (weatherController.currentData.value == null) {
-                    return const Center(child: Text('No data found'));
-                  } else {
-                    var currentData = weatherController.currentData.value!;
-                    return Card(
-                      color: Colors.white.withOpacity(0.7),
-                      elevation: 4,
-                      margin: const EdgeInsets.all(20.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Image.network(
-                                  '$iconPrefix${currentData.weather!.first.icon}$iconSuffix',
-                                  fit: BoxFit.cover,
-                                ),
-                                Text(
-                                  '${currentData.main!.temp}$degree$celsius',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 50),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/clouds.png",
-                                      height: 35,
-                                      width: 35,
-                                    ),
-                                    Text(currentData.clouds!.all.toString()),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/humidity.png",
-                                      height: 35,
-                                      width: 35,
-                                    ),
-                                    Text(currentData.main!.humidity.toString()),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/windspeed.png",
-                                      height: 35,
-                                      width: 35,
-                                    ),
-                                    Text(currentData.wind!.speed.toString()),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
                         ),
                       ),
                     );
-                  }
-                },
-              ),
-              Obx(() {
-                if (weatherController.isLoading.value) {
-                  return const SizedBox(
-                      height: 300,
-                      child: Center(
-                          child: CircularProgressIndicator(
-                        color: Colors.white,
-                      )));
-                } else if (weatherController.forecastData.value == null) {
-                  return const Center(child: Text('No data found'));
-                } else {
-                  var forecastWeather = weatherController.forecastData.value!;
+                  } else if (weatherController.forecastData.value == null) {
+                    return const Center(child: Text('No data found'));
+                  } else {
+                    var forecastWeather = weatherController.forecastData.value!;
 
-                  return Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: forecastWeather.list.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 5),
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.white.withOpacity(0.9)),
-                          child: Row(
+                    return SizedBox(
+                      height: 140,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: weatherController.todayForecast.length +
+                            1, //added 1 for showing 12 am with today list
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: index == 0
+                                    ? Colors.blue
+                                    : AppColors.white50),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  DateFormat("hh:mm a").format(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          forecastWeather.list[index].dt
+                                                  .toInt() *
+                                              1000)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: index == 0
+                                          ? Colors.white
+                                          : Colors.black),
+                                ),
+                                Image.network(
+                                  '$iconPrefix${forecastWeather.list[index].weather.first.icon}$iconSuffix',
+                                  fit: BoxFit.cover,
+                                  width: 50,
+                                ),
+                                Text(
+                                  '${forecastWeather.list[index].main.temp.toInt()}$degree$celsius',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: index == 0
+                                          ? Colors.white
+                                          : Colors.black),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                }),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  "Upcoming",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 1),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Obx(
+                  () => Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20)
+                          .copyWith(top: 10),
+                      decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
+                          color: AppColors.white50),
+                      child: ListView.builder(
+                        // scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: weatherController.upcomingForecast.length,
+                        itemBuilder: (context, index) {
+                          return Column(
                             children: [
-                              Column(
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    DateFormat("hh:mm a").format(
+                                    DateFormat("d/MM/yyyy").format(
                                         DateTime.fromMillisecondsSinceEpoch(
-                                            forecastWeather.list[index].dt
-                                                    .toInt() *
-                                                1000)),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25),
-                                  ),
-                                  Text(
-                                    DateFormat("dd/MM/yyyy").format(
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                            forecastWeather.list[index].dt
+                                            weatherController
+                                                    .upcomingForecast[index].dt
                                                     .toInt() *
                                                 1000)),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12),
                                   ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    DateFormat("hh:mm a").format(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            weatherController
+                                                    .upcomingForecast[index].dt
+                                                    .toInt() *
+                                                1000)),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12),
+                                  ),
+                                  Spacer(),
+                                  Image.network(
+                                    '$iconPrefix${weatherController.upcomingForecast[index].weather.first.icon}$iconSuffix',
+                                    fit: BoxFit.cover,
+                                    width: 50,
+                                  ),
+                                  Text(
+                                    '${weatherController.upcomingForecast[index].main.temp.toInt()}$degree$celsius',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                  ),
                                 ],
                               ),
-                              const Spacer(),
-                              Image.network(
-                                '$iconPrefix${forecastWeather.list[index].weather.first.icon}$iconSuffix',
-                                fit: BoxFit.cover,
-                              ),
-                              Text(
-                                '${forecastWeather.list[index].main.temp}$degree$celsius',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 25),
+                              Divider(
+                                color: AppColors.primary,
                               ),
                             ],
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  );
-                }
-              }),
-            ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  customRowItem({required String image, required String value}) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(16)),
+          child: Image.asset(
+            image,
+            height: 35,
+            width: 35,
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        Text(value),
+      ],
     );
   }
 }
